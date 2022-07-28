@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const baseUrl = 'http://localhost:5000/api/v1/users';
+const baseUrl = ':5000/api/v1/users';
 
 const initialState = {
     users: [],

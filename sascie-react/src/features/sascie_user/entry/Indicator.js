@@ -41,7 +41,7 @@ const Indicator = () => {
 
     // Loads the indicator from the database for the given indicatorId in the url.
     const loadIndicator = async() => {
-        let response = await fetch(`http://localhost:5000/api/v1/indicators/${indicatorId}`, {
+        let response = await fetch(`/api/v1/indicators/${indicatorId}`, {
             method: 'GET',
             credentials: 'include',
         });

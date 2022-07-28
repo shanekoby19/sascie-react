@@ -16,4 +16,4 @@ const connectToDatabase = async () => {
 connectToDatabase();
 
 const port = process.env.DB_PORT || 8000;
-app.listen(port, () => console.log(`Sassie Application is running on port ${port}.`));
+app.listen(port);

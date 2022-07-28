@@ -67,7 +67,6 @@ const EditMe = () => {
 
     try {
       let response = await dispatch(updateMe(formData)).unwrap();
-      console.log('Response: ', response)
       if(response.status === 'error') return setError(response.error);
       setError('');
       setSuccess('Your profile has been updated successfully.');

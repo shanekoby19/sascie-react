@@ -44,7 +44,6 @@ exports.hideOne = (Model) => catchAsync(async(req, res, next) => {
 });
 
 exports.updateOne = (Model) => catchAsync(async(req, res, next) => {
-    console.log('Request Body: ', req.body);
     // Check to see if a userId was given in the route parameter.
     const { id } = req.params;
     if(!id) return next(new AppError('Invalid user id, please resubmit this request with a valid user id', 401));

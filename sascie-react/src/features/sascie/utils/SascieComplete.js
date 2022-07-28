@@ -11,12 +11,11 @@ const SascieComplete = ({
     endDate
 }) => {
     useEffect(() => {
-        console.log('Creating a new sascie')
         const addServiceAreas = async () => {
 
             // Get the program in the database that corresponds to the selected program by the user.
             const dbPrograms = await Promise.all(programs.map(async program => {
-                let response = await fetch(`http://localhost:5000/api/v1/programs/${program._id}`, {
+                let response = await fetch(`/api/v1/programs/${program._id}`, {
                     method: 'GET',
                     credentials: 'include',
                 });
@@ -28,7 +27,7 @@ const SascieComplete = ({
 
                 // Get the current service areas for each selected program
                 const currentServiceAreaNames = await Promise.all(program.serviceAreas.map(async serviceArea => {
-                    let response = await fetch(`http://localhost:5000/api/v1/service-areas/${serviceArea._id}`, {
+                    let response = await fetch(`/api/v1/service-areas/${serviceArea._id}`, {
                         method: 'GET',
                         credentials: 'include'
                     });
@@ -39,7 +38,7 @@ const SascieComplete = ({
                 // Add any service area that doesn't already exist.
                 serviceAreas.forEach(async serviceArea => {
                     if(!currentServiceAreaNames.includes(serviceArea.name)) {
-                        let response = await fetch(`http://localhost:5000/api/v1/programs/${program._id}/service-areas`, {
+                        let response = await fetch(`/api/v1/programs/${program._id}/service-areas`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             credentials: 'include',
@@ -52,14 +51,13 @@ const SascieComplete = ({
                     return;
                 })
             })
-            console.log('...Service Areas Created!')
         }
 
         const addItems = async () => {
 
             // Loop through the user assigned programs and get the program object in the database.
             const dbPrograms = await Promise.all(programs.map(async program => {
-                let response = await fetch(`http://localhost:5000/api/v1/programs/${program._id}`, {
+                let response = await fetch(`/api/v1/programs/${program._id}`, {
                     method: 'GET',
                     credentials: 'include',
                 });
@@ -89,12 +87,11 @@ const SascieComplete = ({
                                    !Boolean(oldItemEndDates.find(momentEndDate => momentEndDate.isSame(endDate, 'day')))
                         });
 
-                        // console.log("New Items: ", newItems);
                         newItems.map(async item => {
                             const executionIds =  await Promise.all(item.executions.map(async (execution) => {
                                 const indicatorIds = await Promise.all(execution.indicators.map(async (indicator) => {
                                     // Insert Indicator and return it's new id.
-                                    let response = await fetch(`http://localhost:5000/api/v1/indicators`, {
+                                    let response = await fetch(`/api/v1/indicators`, {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
                                         credentials: 'include',
@@ -107,7 +104,7 @@ const SascieComplete = ({
                                 }));
 
                                 // Insert Executions with their indicators and return the executionId
-                                let response = await fetch(`http://localhost:5000/api/v1/executions`, {
+                                let response = await fetch(`/api/v1/executions`, {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     credentials: 'include',
@@ -122,7 +119,7 @@ const SascieComplete = ({
                             }));
 
                             // Insert an item with it's executions created above.
-                            let response = await fetch(`http://localhost:5000/api/v1/service-areas/${serviceArea._id}/items`, {
+                            let response = await fetch(`/api/v1/service-areas/${serviceArea._id}/items`, {
                                 method: "POST",
                                 headers: { 'Content-Type': 'application/json' },
                                 credentials: 'include',
@@ -138,7 +135,6 @@ const SascieComplete = ({
                     }
                     
                 })
-                console.log('...Items Created!')
             })
         }
 
@@ -155,14 +151,14 @@ const SascieComplete = ({
 
 
         const deleteUnusedServiceAreas = async () => {
-            let response = await fetch('http://localhost:5000/api/v1/programs/629d049a3bdc150f2c5f75ec', {
+            let response = await fetch('/api/v1/programs/629d049a3bdc150f2c5f75ec', {
                 method: 'GET',
                 credentials: 'include',
             });
             response = await response.json();
             const templateProgramServiceAreaIds = response.data.doc.serviceAreas.map(serviceArea => serviceArea._id);
 
-            response = await fetch('http://localhost:5000/api/v1/service-areas', {
+            response = await fetch('/api/v1/service-areas', {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -172,17 +168,15 @@ const SascieComplete = ({
             const serviceAreasToDelete = allServiceAreas.filter(serviceArea => !templateProgramServiceAreaIds.includes(serviceArea._id));
             
             serviceAreasToDelete.forEach(async (serviceArea) => {
-                await fetch(`http://localhost:5000/api/v1/service-areas/${serviceArea._id}`, {
+                await fetch(`/api/v1/service-areas/${serviceArea._id}`, {
                     method: 'DELETE',
                     credentials: 'include'
                 })
             });
-
-            console.log('Unused service areas deleted.')
         }
 
         const deleteUnusedExecutions = async () => {
-            let response = await fetch('http://localhost:5000/api/v1/programs/629d049a3bdc150f2c5f75ec', {
+            let response = await fetch('/api/v1/programs/629d049a3bdc150f2c5f75ec', {
                 method: 'GET',
                 credentials: 'include',
             });
@@ -199,7 +193,7 @@ const SascieComplete = ({
             // Filter out any empty arrays. Only here because the template program hasn't been completed in the database.
             .filter(array => array.length > 0);
 
-            response = await fetch('http://localhost:5000/api/v1/executions', {
+            response = await fetch('/api/v1/executions', {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -209,17 +203,15 @@ const SascieComplete = ({
             const executionsToDelete = allExecutions.filter(execution => !templateProgramExecutionIds.includes(execution._id));
 
             executionsToDelete.forEach(async (execution) => {
-                await fetch(`http://localhost:5000/api/v1/executions/${execution._id}`, {
+                await fetch(`/api/v1/executions/${execution._id}`, {
                     method: 'DELETE',
                     credentials: 'include'
                 })
             });
-
-            console.log('Unused executions deleted.')
         }
 
         const deleteUnusedIndicators = async () => {
-            let response = await fetch('http://localhost:5000/api/v1/programs/629d049a3bdc150f2c5f75ec', {
+            let response = await fetch('/api/v1/programs/629d049a3bdc150f2c5f75ec', {
                 method: 'GET',
                 credentials: 'include',
             });
@@ -238,7 +230,7 @@ const SascieComplete = ({
             // Filter out any empty arrays. Only here because the template program hasn't been completed in the database.
             .filter(array => array.length > 0);
 
-            response = await fetch('http://localhost:5000/api/v1/indicators', {
+            response = await fetch('/api/v1/indicators', {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -247,19 +239,12 @@ const SascieComplete = ({
             const indicatorsToDelete = allIndicators.filter(indicator => !templateProgramIndicatorIds.includes(indicator._id));
 
             indicatorsToDelete.forEach(async (indicator) => {
-                await fetch(`http://localhost:5000/api/v1/indicators/${indicator._id}`, {
+                await fetch(`/api/v1/indicators/${indicator._id}`, {
                     method: 'DELETE',
                     credentials: 'include'
                 })
             });
-
-            console.log('Unused indicators deleted.')
         }
-
-        // deleteUnusedServiceAreas();
-        // deleteUnusedExecutions();
-        // deleteUnusedIndicators();
-        
 
     }, []);
 

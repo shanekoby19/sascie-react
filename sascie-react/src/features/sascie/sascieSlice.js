@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 
-const baseUrl = 'http://localhost:5000/api/v1';
+const baseUrl = '/api/v1';
 
 const initialState = {
     programs: [],
@@ -185,7 +185,7 @@ export const addIndicator = createAsyncThunk('indicators/addIndicator', async({ 
 
 export const updateIndicator = createAsyncThunk('indicators/updateIndicator', async({ status, indicatorId }) => {
     // Change the indicator status to under review.
-    let response = await fetch(`http://localhost:5000/api/v1/indicators/${indicatorId}`, {
+    let response = await fetch(`/api/v1/indicators/${indicatorId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

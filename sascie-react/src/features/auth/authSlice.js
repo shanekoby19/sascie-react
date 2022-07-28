@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const baseUrl = 'http://localhost:5000/api/v1/auth'
+const baseUrl = '/api/v1/auth'
 
 const initialState = {
     authUser: null,
@@ -133,7 +133,6 @@ const authSlice = createSlice({
         .addCase(login.fulfilled, (state, action) => {
             state.status = 'fulfilled';
             if(action.payload.status === 'success') {
-                console.log('Setting Auth User To: ', action.payload.data.user)
                 state.token = action.payload.accessToken;
                 state.authUser = action.payload.data.user;
                 state.status = 'idle';

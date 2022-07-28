@@ -73,7 +73,7 @@ exports.addPost = catchAsync(async(req, res, next) => {
     // Move the files from their outer directory into their own directory by post id.
     originalFilePaths.forEach((originalFilePath, index) => {
         fse.move(originalFilePath, `sascie-react/public/docs/posts/${post._id}/${originalFileNames[index]}`, err => {
-            console.log(err);
+            return
         });
     })
 

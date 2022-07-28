@@ -23,9 +23,6 @@ const AddUserFormAdmin = () => {
     const [programIds, setProgramIds] = useState([]);
     const [serviceAreaIds, setServiceAreaIds] = useState([]);
 
-    console.log('Program Ids: ', programIds);
-    console.log('Service Area Ids: ', serviceAreaIds);
-
     // Event Handlers
     const onFirstNameUpdate = (e) => setFirstName(e.target.value);
     const onLastNameUpdate = (e) => setLastName(e.target.value);

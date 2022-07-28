@@ -2,6 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 // ROUTERS
 const userRouter = require('./routes/userRoutes');
@@ -59,6 +60,9 @@ app.use('/api/v1/indicators', indicatorRouter);
 
 // Mount Item Router to '/api/v1/items'.
 app.use('/api/v1/posts', postRouter);
+
+// Compresses the text sent to a client in the response object.
+app.use(compression());
 
 // Middleware for any route that does not exist on the server.
 app.use('*', (req, res, next) => {

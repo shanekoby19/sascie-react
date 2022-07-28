@@ -41,7 +41,7 @@ const ForgotPassword = () => {
             setSuccess('');
             setError('');
             try {
-                let response = await fetch(`http://localhost:5000/api/v1/auth/reset-password/${resetTokenRef.current.value}`, {
+                let response = await fetch(`/api/v1/auth/reset-password/${resetTokenRef.current.value}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json'  },
                     body: JSON.stringify({
@@ -50,7 +50,6 @@ const ForgotPassword = () => {
                     }),
                 });
                 response = await response.json();
-                console.log(response);
                 if(response.status !== 'success') return setError(response.error);
                 navigate('/');
 

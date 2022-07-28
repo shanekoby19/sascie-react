@@ -291,8 +291,6 @@ const SascieManager = ({
        setRootName('Indicator');
        setRootId(e.target.value);
 
-       console.log('Posts: ', posts)
-
        setTableData(posts);
    }
 
