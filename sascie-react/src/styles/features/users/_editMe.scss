@@ -1,0 +1,153 @@
+.edit {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    // Edit Me Form Styles
+    &__form {
+        padding: 5rem 10rem;
+        border-radius: 1rem;
+        width: 80%;
+        position: relative;
+
+        &__grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-areas: 
+                "email field"
+                "firstName lastName"
+                "password confirmPassword";
+            justify-items: center;
+        }
+
+        &__filename {
+            color: black;
+        }
+
+        &__user__image {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 3rem;
+
+            & > p,
+            & > h3 {
+                margin-bottom: 0;
+            }
+
+            &--image {
+                position: relative;
+                & > img {
+                    width: 10rem; 
+                    border-radius: 100%;
+                }
+            }
+
+            &--backdrop {
+                position: absolute;
+                transform: translateX(110%) translateY(-100%);
+                top: 90%;
+                right: 2.5rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: white;
+                height: 3rem;
+                width: 3rem;
+                border-radius: 100%;
+
+                & > input {
+                    display: none;
+                }
+
+                & > label > svg {
+                    font-size: 1.5rem;
+                    transform: translateX(.1rem) translateY(.1rem);
+
+                    &:hover {
+                        color: #dc2f02;
+                    }
+                }
+            }
+        }
+
+        &__icon {
+            font-size: 3rem;
+            color: white;
+            position: absolute;
+            right: 3rem;
+
+            &:hover {
+                color: #dc2f02;
+            }
+        }
+
+        &__title--me {
+            margin: 0rem 0rem 7rem 0rem;
+            font-size: 3rem;
+            text-align: center;
+        }
+
+        // Login Inputs
+        &__input {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+            width: 90%;
+
+            &__firstName {
+                grid-area: firstName;
+            }
+
+            &__lastName {
+                grid-area: lastName;
+            }
+
+            &__email {
+                grid-area: email;
+            }
+
+            &__password {
+                grid-area: password;
+            }
+
+            &__confirmPassword {
+                grid-area: confirmPassword;
+            }
+
+            &:not(:last-child) {
+                margin-bottom: 2rem;
+            }
+
+            & > label {
+                margin-bottom: .3rem;
+                font-size: 1.2rem;
+            }
+
+            // Edit Form Button
+            &__btn {
+                padding: .5rem;
+                margin-top: 2rem;
+                border-color: transparent;
+                border-radius: 2rem;
+                cursor: pointer;
+                font-size: 2rem;
+                background-color: $primary-red;
+                color: white;
+                width: 100%;
+
+                &:hover {
+                    background-color:  white;
+                    color: #dc2f02;
+                    border: 1px solid white;
+                }
+
+                &:focus {
+                    outline: 0;
+                }
+            }
+        }
+    }
+}

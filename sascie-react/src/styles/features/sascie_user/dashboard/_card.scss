@@ -1,0 +1,23 @@
+.card {
+    padding: 2rem 4rem;
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+
+    background-image: linear-gradient(to right bottom, $primary_red, lighten($primary_red, 30));
+
+    &:not(:last-child) {
+        margin-bottom: 2rem;
+    }
+
+    &__value {
+        font-size: 2.4rem;
+    }
+
+    &__description {
+        font-size: 1.2rem;
+    }
+}

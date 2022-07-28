@@ -1,0 +1,38 @@
+.navigation {
+    flex-grow: .1;
+    min-width: 18%;
+    padding-top: 2rem;
+     
+    background-color: $primary-blue;
+
+    &__items {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    &__item {
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+            background-color: $primary-red;
+        }
+
+        &:hover &__icon {
+            color: white;
+        }
+
+        &__icon {
+            font-size: 1.5rem;
+            margin-right: 1.5rem;
+        }
+
+        &__link {
+            text-decoration: none;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+    }
+}

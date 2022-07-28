@@ -1,0 +1,67 @@
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+    min-height: 85vh;
+    max-width: 100%;
+    margin-top: 2rem;
+
+    &__label {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    &__filters {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    &__filter__group {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        margin-bottom: 0.5rem;
+        max-width: 40%;
+
+        & > select {
+            margin-bottom: 0rem;
+        }
+
+        &:last-child {
+            margin-bottom: 2rem;
+            margin-right: 2rem;
+        }
+        
+        &:not(:last-child) {
+            margin-right: 2rem;
+        }
+    }
+
+    &__top {
+        display: flex;
+        margin-bottom: 2rem;
+    }
+
+    &__cards {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__radar {
+        &__filter {
+            margin-bottom: 2rem;
+        }
+
+        display: flex;
+        justify-self: center;
+        align-items: center;
+        width: 50%;
+
+        height: 20rem;
+    }
+}

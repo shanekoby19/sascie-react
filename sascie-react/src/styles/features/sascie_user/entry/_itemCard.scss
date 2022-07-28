@@ -1,0 +1,107 @@
+.sascie__entry__item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    border: 1px solid black;
+    border-radius: 0.8rem;
+
+    & select {
+        font-size: 1.3rem;
+        width: 100%;
+        margin-bottom: 2rem;
+        padding-left: .2rem;
+        background-color: white;
+        border-color: $primary_red;
+
+        & > option { 
+            /* wrap text in compatible browsers */
+            -moz-white-space: pre-wrap;
+            -o-white-space: pre-wrap;
+            white-space: pre-wrap;
+            /* hide text that can't wrap with an ellipsis */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /* add border after every option */
+            border-bottom: 1px solid #DDD;
+        }
+    }
+
+    &--footer {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__info__group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__indicator__container {
+        margin-bottom: 1rem;
+        background-color: $primary_red;
+        border-radius: 50%;
+        height: 2.2rem;
+        width: 2.2rem;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &--indicator {
+        height: 3.5rem;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+
+        &__header {
+            font-size: 1.3rem;
+            margin-bottom: .4rem;
+        }
+    }
+
+    &--header {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    &--sub-header {
+        font-size: 1.3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        &__icon {
+            margin: 0rem 0.5rem;
+            color: $primary_red;
+        }
+    }
+
+    &--btn {
+        width: 10rem;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        padding: 0.5rem 1rem;
+        background-color: $primary_red;
+        color: white;
+        align-self: flex-end;
+        border: none;
+        border-radius: 0.8rem;
+        transition: transform 0.3s;
+
+        &:hover {
+            cursor: pointer;
+            transform: scale(1.05) translateY(-4px);
+        }
+
+        &:active {
+            cursor: pointer;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+}

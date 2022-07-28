@@ -1,0 +1,181 @@
+main {
+    display: flex;
+}
+
+.slides {
+    width: 45%;
+    background-color: $primary-red;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+
+    .slide {
+        width: 75%;
+
+        &__text {
+            display: inline;
+            position: relative;
+            font-size: 2rem;
+
+            &::before {
+                content: open-quote;
+                font-size: 3rem;
+                margin-right: .5rem;
+                color: black;
+            }
+        
+            &::after {
+                content: close-quote;
+                font-size: 3rem;
+                position: absolute;
+                bottom: -1rem;
+                right: -2rem;
+                color: black;
+            }
+        };
+
+        &__name {
+            font-size: 4rem;
+            text-align: right;
+            margin: 2rem 2rem 0rem 0rem;
+        }
+    }
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 55%;
+    height: 100vh;
+
+    // Login Form Styles
+    &__form {
+        padding: 2rem;
+        border-radius: 1rem;
+        width: 60%;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &__loader {
+            &__character {
+                display: inline-block;
+            }
+        }
+
+        &__img {
+            width: 70%;
+            text-align: center;
+        }
+
+        // Login title
+        &__title {
+            font-size: 3rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        // Login Inputs
+        &__input {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            position: relative;
+
+            &:not(:last-child) {
+                margin-bottom: 2rem;
+            }
+
+            & > label {
+                margin-bottom: .3rem;
+                font-size: 1.2rem;
+            }
+
+            // Email Icon
+            &__email__icon,
+            &__password__icon {
+                font-size: 2rem;
+                font-weight: 600;
+                color: $primary-red;
+                position: absolute;
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            &__password__icon {
+                font-size: 1.5rem;
+                font-weight: 300;
+                bottom: 1.2rem;
+                right: 1.2rem;
+            }
+
+            // Login Button
+            &__btn {
+                padding: .5rem;
+                margin-top: 1rem;
+                border: 1px solid $primary-red;
+                border-radius: 2rem;
+                cursor: pointer;
+                font-size: 2rem;
+                background-color: $primary-red;
+                color: white;
+                font-family: inherit;
+                font-weight: 600;
+                transition: all .2s;
+
+                &:hover {
+                    background-color: $primary-red;
+                    box-shadow: .5rem 1rem 1rem rgba(0, 0, 0, 0.2);
+                    color: white;
+                }
+
+                &:active {
+                    outline: 0;
+                    transform: translateY(4px);
+                    box-shadow: none;
+                }
+            }
+        }
+
+        &__actions {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        &__action {
+            // Login forgot-password
+            &--forgot__password,
+            &--demo {
+                align-self: flex-end;
+                text-align: right;
+                font-weight: 600;
+                justify-content: right;
+                margin-right: 1rem;
+                color: $primary-red;
+                transition: all .3s;
+
+                &:hover {
+                    color: $primary-red;
+                    cursor: pointer;
+                    background-color: $primary-grey;
+                    padding: 0.5rem 1rem;
+                    border-radius: 1.5rem;
+                    box-shadow: 0.5rem 1rem 1rem rgba(0, 0, 0, 0.2);
+                }
+
+                &:active {
+                    transform: translateY(3px);
+                    box-shadow: none;
+                }
+            }
+        }
+    }
+
+}

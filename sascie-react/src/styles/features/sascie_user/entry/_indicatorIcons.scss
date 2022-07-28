@@ -1,0 +1,43 @@
+.indicator__icons {
+    display: flex;
+    justify-content: flex-end;
+
+    &__group {
+        display: flex;
+        align-items: center;
+        margin-right: 1rem;
+    }
+
+    &__count {
+        margin-right: 0.5rem;
+        font-size: 2rem;
+        font-weight: 700;
+
+        &--red {
+            color: $primary-red;
+        }
+
+        &--yellow {
+            color: #ffee00;
+        }
+
+        &--green {
+            color: #94d500;
+        }
+    }
+
+    &__incomplete {
+        color: $primary-red;
+        transform: translateY(4px);
+    }
+
+    &__under-review {
+        color: #ffee00;
+        transform: translateY(4px);
+    }
+
+    &__completed {
+        color: #94d500;
+        transform: translateY(4px);
+    }
+}

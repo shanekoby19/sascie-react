@@ -1,0 +1,23 @@
+.sascie__import {
+    & > input[type="file"] {
+        display:none;
+    }
+
+    &__file__selector {
+        &:hover {
+            cursor: pointer;
+        }
+
+        &--text {
+            margin-right: 1rem;
+            color: $primary-red;
+        }       
+        
+        // paperclip icon
+        &--icon {
+            transform: scale(0.9) translateY(3px) rotateZ(-45deg);
+            color: rgb(172, 169, 169);
+        }
+
+    }
+}

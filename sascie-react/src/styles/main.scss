@@ -1,0 +1,59 @@
+// VARIABLES AND MIXINS
+@import './abstracts/mixins';
+@import './abstracts/variables';
+
+// FEATURES STYLES - AUTH, SASCIE, POST, SERVICE AREAS, UTILS
+
+// AUTH PAGE STYLES
+@import './features/auth/login.scss';
+@import './features/auth/forgotPassword.scss';
+
+// USER STYLES
+@import './features/users/addUserFormAdmin';
+@import './features/users/editMe';
+@import './features/users/editUserFormAdmin';
+@import './features/users/usersList';
+
+// UTILITY COMPONENT STYLES
+@import './features/utils/message';
+@import './features/utils/loader';
+
+// LAYOUT STYLES
+@import './layout/nav';
+@import './layout/adminPage';
+@import './layout/navigation';
+@import './layout/view';
+@import './layout/sasciePage';
+
+
+// SASCIE Styles
+@import './features/sascie/sascieAdmin';
+@import './features/sascie/utils/sascieInit';
+@import './features/sascie/sascieManager';
+@import './features/sascie/sascieImport';
+
+// SERVICE AREAS
+@import './features/sascie/serviceAreas/serviceAreas';
+
+// ITEMS
+@import './features/sascie/items/items';
+
+// EXECUTIONS
+@import './features/sascie/executions/executions';
+
+// COMPLETED
+@import './features/sascie/utils/sascieComplete';
+
+// SASCIE USER
+@import './features/sascie_user/entry/indicator';
+@import './features/sascie_user/entry/itemCard';
+@import './features/sascie_user/entry/sascieEntry';
+@import './features/sascie_user/entry/indicatorIcons';
+@import './features/sascie_user/dashboard/dashboard';
+@import './features/sascie_user/dashboard/card';
+@import './features/sascie_user/dashboard/indicatorTable';
+
+
+// BASE STYLES
+@import './base/base';
+@import './base/typography';
