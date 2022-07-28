@@ -1,3 +1,3 @@
 # SASCIE Application
 
-A full-stack (MERN: MongoDB, Express, React, NodeJS) application developed to take SASCIE into the web. SASCIE is an acronym standing for (Self-Assessment System for Continuous Improvement and Evaluation) and it is how we perform on annual self-assessments. SASCIE was traditionally done on Google sheet but using modern javascript technologies it can now be hosted on the internet.
+A full-stack (MERN: MongoDB, Express, React, NodeJS) application developed to take SASCIE onto the web. SASCIE is an acronym standing for (Self-Assessment System for Continuous Improvement and Evaluation) and it is how we perform on annual self-assessments. SASCIE was traditionally done on Google Sheets but using modern javascript technologies it can now be hosted on the internet.
