@@ -4,7 +4,7 @@
   "description": "A web-application to support Acelero and Shine Sassie.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon server.js NODE_ENV=development",
     "client": "cd sascie-react && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
@@ -35,5 +35,8 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
