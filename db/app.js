@@ -70,7 +70,7 @@ if(process.env.NODE_ENV === 'production') {
 
     // Anything that doesn't match the above, send back index.html
     app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname + '../sascie-react/build/index.html'))
+        res.sendFile(path.join(__dirname, '../sascie-react/build/index.html'))
     })
 }
 
