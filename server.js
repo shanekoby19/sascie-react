@@ -15,5 +15,5 @@ const connectToDatabase = async () => {
 
 connectToDatabase();
 
-const port = process.env.DB_PORT || 8000;
+const port = process.env.PORT || 8000;
 app.listen(port);

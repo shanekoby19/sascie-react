@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "nodemon server.js NODE_ENV=development",
+    "server": "nodemon server.js NODE_ENV=production",
     "client": "cd sascie-react && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "debug:dev": "ndb server.js NODE_ENV=development",
