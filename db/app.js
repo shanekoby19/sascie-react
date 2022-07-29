@@ -66,7 +66,7 @@ app.use('/api/v1/posts', postRouter);
 app.use(compression());
 
 if(process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, 'sascie-react/build')));
+    app.use(express.static(path.join(__dirname, '../sascie-react/build')));
 
     // Anything that doesn't match the above, send back index.html
     app.get('*', (req, res) => {
