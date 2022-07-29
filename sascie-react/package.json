@@ -23,6 +23,7 @@
     "react-scripts": "5.0.1",
     "recharts": "^2.1.12",
     "redux": "^4.2.0",
+    "sass": "^1.54.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -49,7 +50,7 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "sass": "^1.50.1"
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
