@@ -11,7 +11,7 @@
     "start": "concurrently \"npm run server\" \"npm run start:client\"",
     "server": "node server.js NODE_ENV=production",
     "start:client": "cd sascie-react && npm start",
-    "heroku-postbuild": "npm run install:client && run build:client",
+    "heroku-postbuild": "npm run install:client && npm run build:client",
     "build:client": "cd sascie-react && npm run build",
     "install:client": "cd sascie-react && npm install"
   },
