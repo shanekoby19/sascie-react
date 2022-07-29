@@ -6,8 +6,9 @@
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "node server.js NODE_ENV=production",
+    "dev:server": "nodemon server.js NODE_ENV=production",
     "client": "cd sascie-react && npm start",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "concurrently \"npm run dev:server\" \"npm run client\"",
     "debug:dev": "ndb server.js NODE_ENV=development",
     "debug:prod": "ndb server.js"
   },
@@ -28,13 +29,11 @@
     "multer": "^1.4.4",
     "ndb": "^1.1.5",
     "nodemailer": "^6.7.5",
+    "nodemon": "^2.0.19",
     "papaparse": "^5.3.2",
     "redux-persist": "^6.0.0",
     "sharp": "^0.30.5",
     "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.15"
   },
   "engines": {
     "node": ">=16.0.0"
