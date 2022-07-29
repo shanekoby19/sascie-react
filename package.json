@@ -4,13 +4,17 @@
   "description": "A web-application to support Acelero and Shine Sassie.",
   "main": "server.js",
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "node server.js NODE_ENV=production",
     "dev:server": "nodemon server.js NODE_ENV=production",
-    "client": "cd sascie-react && npm start",
     "dev": "concurrently \"npm run dev:server\" \"npm run client\"",
     "debug:dev": "ndb server.js NODE_ENV=development",
-    "debug:prod": "ndb server.js"
+    "debug:prod": "ndb server.js",
+
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "node server.js NODE_ENV=production",
+    "client": "cd sascie-react && npm start",
+    
+    "heroku-postbuild": "npm run install-client && npm start",
+    "install-client": "cd sascie-react && npm install"
   },
   "author": "Shane Kobylecky",
   "license": "MIT",
