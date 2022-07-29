@@ -67,6 +67,11 @@ app.use(compression());
 
 if(process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, 'sascie-react/build')));
+
+    // Anything that doesn't match the above, send back index.html
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname + '/sascie-react/build/index.html'))
+    })
 }
 
 // Middleware for any route that does not exist on the server.
