@@ -65,7 +65,7 @@ app.use('/api/v1/posts', postRouter);
 app.use(compression());
 
 if(process.env.NODE_ENV === 'production') {
-    app.use(express.static(__dirname, 'sascie-react/build'));
+    app.use(express.static(path.join(__dirname, 'sascie-react/build')));
 }
 
 // Middleware for any route that does not exist on the server.
