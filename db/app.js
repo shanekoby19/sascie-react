@@ -64,8 +64,8 @@ app.use('/api/v1/posts', postRouter);
 // Compresses the text sent to a client in the response object.
 app.use(compression());
 
-if(process.env.NODE__ENV === 'production') {
-    app.use(express.static(__dirname, 'sascie-react/build'))
+if(process.env.NODE_ENV === 'production') {
+    app.use(express.static(__dirname, 'sascie-react/build'));
 }
 
 // Middleware for any route that does not exist on the server.
