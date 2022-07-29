@@ -5,16 +5,17 @@
   "main": "server.js",
   "scripts": {
     "dev:server": "nodemon server.js NODE_ENV=production",
-    "dev": "concurrently \"npm run dev:server\" \"npm run client\"",
+    "dev": "concurrently \"npm run dev:server\" \"npm run start:client\"",
     "debug:dev": "ndb server.js NODE_ENV=development",
     "debug:prod": "ndb server.js",
 
-    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "concurrently \"npm run server\" \"npm run start:client\"",
     "server": "node server.js NODE_ENV=production",
-    "client": "cd sascie-react && npm start",
-    
-    "heroku-postbuild": "npm run install-client && npm start",
-    "install-client": "cd sascie-react && npm install"
+    "start:client": "cd sascie-react && npm start",
+
+    "heroku-postbuild": "npm run install:client && run build:client",
+    "build:client": "cd sascie-react && npm run build",
+    "install:client": "cd sascie-react && npm install"
   },
   "author": "Shane Kobylecky",
   "license": "MIT",
