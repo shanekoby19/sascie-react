@@ -8,11 +8,9 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run start:client\"",
     "debug:dev": "ndb server.js NODE_ENV=development",
     "debug:prod": "ndb server.js",
-
     "start": "concurrently \"npm run server\" \"npm run start:client\"",
     "server": "node server.js NODE_ENV=production",
     "start:client": "cd sascie-react && npm start",
-
     "heroku-postbuild": "npm run install:client && run build:client",
     "build:client": "cd sascie-react && npm run build",
     "install:client": "cd sascie-react && npm install"
@@ -32,7 +30,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.1",
     "multer": "^1.4.4",
-    "ndb": "^1.1.5",
+    "ndb": "^0.2.4",
     "nodemailer": "^6.7.5",
     "nodemon": "^2.0.19",
     "papaparse": "^5.3.2",
