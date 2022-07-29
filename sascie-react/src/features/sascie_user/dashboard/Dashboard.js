@@ -192,8 +192,6 @@ const Dashboard = () => {
             completedPercentage = currentExecutions[index + 1].indicators.filter(indicator => indicator.status === 'Completed' || indicator.status === 'Under Review').length / 1 ? 1 : 0;
         }
 
-        ('Execution: ', completedPercentage);
-
         return {
             name: execution.metric,
             completionPercentage: completedPercentage.toFixed(2),
