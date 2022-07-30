@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const baseUrl = 'https://oneacelerosascie/api/v1/users';
+const baseUrl = 'http://oneacelerosascie/api/v1/users';
 
 const initialState = {
     users: [],
