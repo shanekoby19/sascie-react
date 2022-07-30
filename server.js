@@ -14,6 +14,7 @@ const connectToDatabase = async () => {
 
 connectToDatabase();
 
+console.log('Process Environment: ', process.env);
 console.log('Production port: ', process.env.PORT);
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
