@@ -8,7 +8,7 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run start:client\"",
     "debug:dev": "ndb server.js NODE_ENV=development",
     "debug:prod": "ndb server.js",
-    "start": "REACT_APP_PROD_PORT=$PORT node server.js",
+    "start": "REACT_APP_PROD_PORT=PORT node server.js",
     "server": "node server.js",
     "start:client": "cd sascie-react && npm start",
     "heroku-postbuild": "npm run install:client && npm run build:client",
