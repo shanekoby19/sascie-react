@@ -11,8 +11,8 @@
     "start": "REACT_APP_PROD_PORT=$PORT node server.js",
     "server": "node server.js",
     "start:client": "cd sascie-react && npm start",
-    "heroku-postbuild": "REACT_APP_PROD_PORT=$PORT npm run install:client && npm run build:client",
-    "build:client": "REACT_APP_PROD_PORT=$PORT cd sascie-react && npm run build",
+    "heroku-postbuild": "npm run install:client && npm run build:client",
+    "build:client": "cd sascie-react && npm run build",
     "install:client": "cd sascie-react && npm install"
   },
   "author": "Shane Kobylecky",
