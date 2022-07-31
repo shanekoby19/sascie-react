@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const baseUrl = process.env.NODE_ENV === 'production' ? `https://oneacelerosascie/api/v1/auth` : 'http://localhost:5000/api/v1/auth';
-console.log('Base URL: ', baseUrl);
+const baseUrl = process.env.NODE_ENV === 'production' ? `/api/v1/auth` : 'http://localhost:5000/api/v1/auth';
 
 const initialState = {
     authUser: null,
