@@ -66,7 +66,6 @@ const Login = () => {
         try {
             const res = await dispatch(login({ email, password })).unwrap();
             if(res.status === 'error') return setError(res.error);
-            console.log('Server Respone: ', res);
 
             // If the user successfully logged in, set there sascie data and fetch all users.
             dispatch(setSascieData(res.data));
@@ -79,7 +78,6 @@ const Login = () => {
     const loadUsers = async () => {
         try {
             const res = await dispatch(fetchUsers()).unwrap();
-            console.log('Users Response: ', res);
             if(res.status === 'success') return navigate('/sascie/dashboard');
             setError(res.error);
         } catch(err) {

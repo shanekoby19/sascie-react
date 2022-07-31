@@ -49,24 +49,24 @@ function App() {
         <Route path="admin" element={<Layout />}>
           <Route path="users">
             <Route index element={
-              <RequireAuth> 
+              <RequireAuth minimumAuthLevel="admin"> 
                 <AdminPage Page={UsersList} name='users' />
               </RequireAuth>} 
             />
-            <Route path='add' element={<RequireAuth><AddUserFormAdmin /></RequireAuth>} />
+            <Route path='add' element={<RequireAuth minimumAuthLevel="admin"><AddUserFormAdmin /></RequireAuth>} />
             <Route path='edit/:userId' element={
-              <RequireAuth> 
+              <RequireAuth minimumAuthLevel="admin"> 
                 <EditUserFormAdmin />
               </RequireAuth>} 
             />
           </Route>
           <Route path="sascie" element={
-            <RequireAuth> 
+            <RequireAuth minimumAuthLevel="admin"> 
               <AdminPage Page={SascieAdmin} name='sascie' />
             </RequireAuth>} 
           />
           <Route path="library" element={
-            <RequireAuth> 
+            <RequireAuth minimumAuthLevel="admin"> 
               <AdminPage Page={LibraryAdmin} name='library' />
             </RequireAuth>} 
           />

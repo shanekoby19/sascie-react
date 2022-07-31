@@ -83,6 +83,7 @@ exports.logout = catchAsync(async(req, res, next) => {
 
     // Send a blank access token back to the user. -- For clean up on front-end;
     res.status(200).json({
+        status: 'success',
         data: {
             accessToken: '',
         }

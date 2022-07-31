@@ -1,0 +1,14 @@
+.bad-auth {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &--header {
+        text-align: center;
+        color: $primary-red;
+    }
+
+    &--sub-header {
+        text-align: center;
+    }
+}

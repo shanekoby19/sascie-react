@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
 
 const baseUrl = process.env.NODE_ENV === 'production' ? `/api/v1/auth` : 'http://localhost:5000/api/v1/auth';
 
@@ -27,7 +27,8 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }) 
 export const logout = createAsyncThunk('auth/logout', async() => {
     try {
         let response = await fetch(`${baseUrl}/logout`, {
-            credentials: 'include'
+            credentials: 'include',
+            method: 'POST',
         });
         response = await response.json();
         return response;
@@ -147,7 +148,7 @@ const authSlice = createSlice({
         .addCase(logout.fulfilled, (state, action) => {
             state.status = 'fulfilled';
             if(action.payload.status === 'success') {
-                state.token = action.payload.accessToken;
+                state.token = null;
                 state.authUser = null
                 state.status = 'idle';
             } else {
