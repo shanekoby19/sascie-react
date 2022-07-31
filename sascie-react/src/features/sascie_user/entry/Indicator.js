@@ -41,11 +41,13 @@ const Indicator = () => {
 
     // Loads the indicator from the database for the given indicatorId in the url.
     const loadIndicator = async() => {
-        let response = await fetch(`/api/v1/indicators/${indicatorId}`, {
+        const url = process.env.NODE_ENV === 'production' ?  `/api/v1/indicators/${indicatorId}` :`http://localhost:5000/api/v1/indicators/${indicatorId}`;
+        let response = await fetch(url, {
             method: 'GET',
             credentials: 'include',
         });
         response = await response.json();
+        console.log('Response: ', response);
         setIndicator(response.data.doc);
         setLoading(false);
     }
@@ -175,15 +177,19 @@ const Indicator = () => {
                             ></textarea>
                             <div className='indicator__post__create__menu'>
                                 <label htmlFor='files'><FaPaperclip className='indicator__post__create__menu__icon'/></label>
-                                <input 
-                                    className='indicator__post__files__input'
-                                    onChange={handleFilesChanged}
-                                    type='file'
-                                    accept='image/*, .csv, .xlsx, .xls, .pdf, .doc, .docx'
-                                    id='files' 
-                                    name='files'
-                                    multiple
-                                ></input>
+                                {
+                                    process.env.NODE_ENV === 'development' ?
+                                    <input className="simple-file-upload" data-width="300" data-height="300" data-accepted="image/*" type="hidden" name="user[avatar_url]" id="user_avatar_url" /> :
+                                    <input 
+                                        className='indicator__post__files__input'
+                                        onChange={handleFilesChanged}
+                                        type='file'
+                                        accept='image/*, .csv, .xlsx, .xls, .pdf, .doc, .docx'
+                                        id='files' 
+                                        name='files'
+                                        multiple
+                                    ></input>
+                                }
                             
                                 <button 
                                     className='indicator__post__create__menu__btn'
