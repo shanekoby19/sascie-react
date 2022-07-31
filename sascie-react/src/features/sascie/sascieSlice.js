@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 
-const baseUrl = '/api/v1';
+const baseUrl = process.env.NODE_ENV === 'production' ? `/api/v1` : 'http://localhost:5000/api/v1/auth';
 
 const initialState = {
     programs: [],
