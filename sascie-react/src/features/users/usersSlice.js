@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 console.log("Process Environment: ", process.env);
-const baseUrl = process.env.NODE_ENV === 'production' ? `http://oneacelerosascie:${process.env.REACT_APP_PROD_PORT}/api/v1/users` : `http://localhost:${process.env.REACT_APP_DEV_PORT}/api/v1/users`;
+const baseUrl = process.env.NODE_ENV === 'production' ? `https://oneacelerosascie/api/v1/users` : `http://localhost:${process.env.REACT_APP_DEV_PORT}/api/v1/users`;
 console.log('Base URL: ', baseUrl);
 
 const initialState = {
