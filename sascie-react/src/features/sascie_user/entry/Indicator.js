@@ -177,20 +177,7 @@ const Indicator = () => {
                             ></textarea>
                             <div className='indicator__post__create__menu'>
                                 <label htmlFor='files'><FaPaperclip className='indicator__post__create__menu__icon'/></label>
-                                {
-                                    process.env.NODE_ENV === 'development' ?
-                                    <input className="simple-file-upload" data-width="300" data-height="300" data-accepted="image/*" type="hidden" name="user[avatar_url]" id="user_avatar_url" /> :
-                                    <input 
-                                        className='indicator__post__files__input'
-                                        onChange={handleFilesChanged}
-                                        type='file'
-                                        accept='image/*, .csv, .xlsx, .xls, .pdf, .doc, .docx'
-                                        id='files' 
-                                        name='files'
-                                        multiple
-                                    ></input>
-                                }
-                            
+                                <input className="simple-file-upload" data-width="300" data-height="300" data-accepted="image/*" type="hidden" name="user[avatar_url]" id="user_avatar_url" /> :                        
                                 <button 
                                     className='indicator__post__create__menu__btn'
                                     onClick={handleAddPost}
