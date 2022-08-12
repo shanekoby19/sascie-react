@@ -9,6 +9,10 @@ const postSchema = mongoose.Schema({
         type: String,
         required: [true, 'A post must have a user photo assigned to it.']
     },
+    createdAt: {
+        type: Date,
+        default: Date.now(),
+    },
     lastUpdatedAt: {
         type: Date,
         required: [true, 'A post must have the date and time for which it was last updated.']

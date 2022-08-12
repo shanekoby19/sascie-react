@@ -7,6 +7,7 @@ const handlerFactory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const aws = require('aws-sdk');
+const { create } = require('../models/postModel');
 
 exports.getAllPosts = handlerFactory.getAll(Post);
 exports.getPost = handlerFactory.getOne(Post);
@@ -40,6 +41,7 @@ exports.getPostFile = catchAsync(async (req, res, next) => {
 
 exports.addPost = catchAsync(async(req, res, next) => {
     const indicatorId = req.params?.indicatorId ? mongoose.Types.ObjectId(req.params.indicatorId) : undefined;
+    const createdAt = Date.now();
 
     // Add all post files to AWS S3 
     if(req.files.length !== 0) {
@@ -60,7 +62,7 @@ exports.addPost = catchAsync(async(req, res, next) => {
             const params = {
                 Body: file.buffer,
                 Bucket: 'sascie',
-                Key: `posts/docs/${file.originalname}`,
+                Key: `posts/docs/${file.originalname.split('.')[0]}-${createdAt}.${file.originalname.split('.')[1]}`,
                 ContentType: file.mimetype
             }
 
@@ -69,7 +71,7 @@ exports.addPost = catchAsync(async(req, res, next) => {
         }));
     }
 
-    const fileNames = req.files.map(file => file.originalname);
+    const fileNames = req.files.map(file => `${file.originalname.split('.')[0]}-${createdAt}.${file.originalname.split('.')[1]}`);
 
     // Create a new post with all the data except the files.
     const post = await Post.create({
@@ -78,6 +80,7 @@ exports.addPost = catchAsync(async(req, res, next) => {
         photo: req.user.photo,
         files: fileNames,
         createdBy: `${req.user.firstName} ${req.user.lastName}`,
+        createdAt,
     });
 
     if(indicatorId) {
@@ -131,8 +134,6 @@ exports.deletePost = catchAsync(async(req, res, next) => {
     const post = await Post.findById(postId);
     post.remove();
 
-    console.log('Post: ', post);
-
     // Add all post files to AWS S3 
     if(post.files.length !== 0) {
 
@@ -146,10 +147,7 @@ exports.deletePost = catchAsync(async(req, res, next) => {
 
         // PARAMETER DEFINITION
         const s3 = new aws.S3();
-
         const fileNames = post.files.map(file => ({ Key: `posts/docs/${file}` }));
-
-        console.log('File names: ', fileNames);
 
         // For every file, store the file in the S3 bucket and return it's location.
         const params = {
@@ -158,8 +156,6 @@ exports.deletePost = catchAsync(async(req, res, next) => {
                 Objects: fileNames
             }
         }
-
-        console.log('Params: ', params);
 
         await s3.deleteObjects(params).promise();
     }

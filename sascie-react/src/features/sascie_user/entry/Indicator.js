@@ -102,7 +102,11 @@ const Indicator = () => {
 
         const post = new FormData();
         post.append("comment", commentRef.current.value);
-        postFiles.forEach(file => post.append("files", file));
+
+        // If post files exist, append them to the form data.
+        if(postFiles) {
+            postFiles.forEach(file => post.append("files", file));
+        }
 
         const response = await dispatch(addPost({ post, indicatorId }));
         if(response.status === 'error') return setError(response.error);
@@ -129,10 +133,14 @@ const Indicator = () => {
                 type: response.data.ContentType
             });
 
+            // Example File: dog-10319234024.png
+            const extension = file.split('.')[1];
+            const filename = file.split('.')[0].split('-')[0];
+
             // Create a new link on the window object.
             let link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link.download = file.split('/').slice(-1)[0];
+            link.download = `${filename}.${extension}`;
             link.click();       
         }
         catch (err) {
@@ -213,7 +221,9 @@ const Indicator = () => {
                                 >POST</button>
                             </div>
                         </div>
-                        <div className='indicator__post__files'>
+                        <div 
+                            className='indicator__post__files'
+                        >
                             {
                                 postFiles &&
                                 postFiles.map(file => (
@@ -246,22 +256,30 @@ const Indicator = () => {
                                 </div>
                             </div>
                             <p className='indicator__post__comment'>{post.comment}</p>
-                            <div className='indicator__post__files'>
+                            <div 
+                                className='indicator__post__files'
+                                key={post}
+                            >
                             {
                                 post.files &&
-                                post.files.map(file => (
-                                    <div 
-                                        className='indicator__post__files--container'
-                                        key={uuidv4()}
-                                        onClick={() => downloadFile(file)}
-                                    >
-                                        <FaPaperclip className='indicator__post__files--file__icon'/>
-                                        <p 
-                                            className='indicator__post__files--file__name'
-                                        >{file.split('/').slice(-1)}
-                                        </p>
-                                    </div>
-                                ))
+                                post.files.map(file => {
+                                    // Example File: dog-10319234024.png
+                                    const extension = file.split('.')[1];
+                                    const filename = file.split('.')[0].split('-')[0];
+
+                                    return (
+                                        <div 
+                                            className='indicator__post__files--container'
+                                            key={uuidv4()}
+                                            onClick={() => downloadFile(file)}
+                                        >
+                                            <FaPaperclip className='indicator__post__files--file__icon'/>
+                                            <p 
+                                                className='indicator__post__files--file__name'
+                                            >{`${filename}.${extension}`}
+                                            </p>
+                                        </div>
+                                    )})
                             }
                             </div>
                         </div> 
