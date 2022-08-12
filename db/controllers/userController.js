@@ -26,8 +26,6 @@ const upload = multer({
     fileFilter: multerFilter,
 });
 
-
-
 exports.hideUser = handlerFactory.hideOne(User);
 
 // Multer photo upload middleware.

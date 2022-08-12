@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 
-const baseUrl = process.env.NODE_ENV === 'production' ? `/api/v1` : 'http://localhost:5000/api/v1/';
+const baseUrl = process.env.NODE_ENV === 'production' ? `/api/v1` : 'http://localhost:5000/api/v1';
 
 const initialState = {
     programs: [],
@@ -185,7 +185,7 @@ export const addIndicator = createAsyncThunk('indicators/addIndicator', async({ 
 
 export const updateIndicator = createAsyncThunk('indicators/updateIndicator', async({ status, indicatorId }) => {
     // Change the indicator status to under review.
-    let response = await fetch(`/api/v1/indicators/${indicatorId}`, {
+    let response = await fetch(`${baseUrl}/indicators/${indicatorId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -211,11 +211,12 @@ export const deleteIndicator = createAsyncThunk('indicators/deleteIndicator', as
     }
 });
 
-export const addPost = createAsyncThunk('posts/addPost', async({ formData, indicatorId }) => {
+// ADD POST
+export const addPost = createAsyncThunk('posts/addPost', async({ post, indicatorId }) => {
     let response = await fetch(`${baseUrl}/indicators/${indicatorId}/posts`, {
         method: 'POST',
         credentials: 'include',
-        body: formData
+        body: post,
     });
     response = await response.json();
     return response;
@@ -529,16 +530,16 @@ const sascieSlice = createSlice({
             // POST REDUCERS
             .addCase(addPost.fulfilled, (state, action) => {
                 if(action.payload.status === 'success') {
-                    const { updatedPost, indicatorId } = action.payload.data;
+                    const { post, indicatorId } = action.payload.data;
 
                     // If an indicatorID was returned, update the indicator in the redux state.
                     if(indicatorId) {
                         const indicator = state.indicators.find(indicator => indicator._id === indicatorId);
-                        indicator.posts = [...indicator.posts, updatedPost];
+                        indicator.posts = [...indicator.posts, post];
                     }
 
                     // Add the post to the posts state object.
-                    state.posts = [...state.posts, updatedPost];
+                    state.posts = [...state.posts, post];
                 }
             })
 

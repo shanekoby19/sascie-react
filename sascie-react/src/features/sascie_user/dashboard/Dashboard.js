@@ -314,7 +314,8 @@ const Dashboard = () => {
                     <div>
                         <div className='dashboard__table'>
                             <IndicatorTable 
-                                executions={currentExecutions}
+                                // Remove odd indexed executions. --> Odd indexes are graded relative to the previous index.
+                                executions={currentExecutions.filter((_, index) => index % 2 !== 1)}
                                 setExecutions={setCurrentExecutions}
                                 currentExecution={selectedExecution}
                                 setCurrentExecution={setSelectedExecution}

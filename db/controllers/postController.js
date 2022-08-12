@@ -1,81 +1,84 @@
 const mongoose = require('mongoose');
-const multer = require('multer');
+
 
 const Post = require('../models/postModel');
 const Indicator = require('../models/indicatorModel');
 const handlerFactory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const fse = require('fs-extra');
+const aws = require('aws-sdk');
 
 exports.getAllPosts = handlerFactory.getAll(Post);
 exports.getPost = handlerFactory.getOne(Post);
 
-// Handle File Uploads
-const multerStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'sascie-react/public/docs/posts/')
-    },
-    filename: (req, file, cb) => {
-        cb(null, `post-${file.originalname}`)
-    },
-});
+// POST FILE MIDDLEWARE
+exports.getPostFile = catchAsync(async (req, res, next) => {
 
-const multerFilter = (req, file, cb) => {
-    const { originalname } = file;
-    const ext = originalname.split('.')[1];
-    const allowedExts = ['csv', 'pdf', 'xlsx', 'xls', 'xlsm', '.doc', '.docx'];
+    // Set the AWS config using secure keys from HEROKU.
+    aws.config.setPromisesDependency();
+    aws.config.update({
+        accessKeyId: process.env.AWS_KEY,
+        secretAccessKey: process.env.AWS_SECRET,
+        region: 'us-west-1',
+    });
 
-    if(file.mimetype.includes('image') || allowedExts.includes(ext)) {
-        cb(null, true)
+    // PARAMETER DEFINITION
+    const s3 = new aws.S3();
+
+    const params = {
+        Bucket: 'sascie',
+        Key: req.body.key
     }
-    else {
-        cb(new AppError('File must be an image, pdf or csv.', 400), false);
-    }
-}
 
-const upload = multer({
-    storage: multerStorage,
-    fileFilter: multerFilter,
-});
+    const response = await s3.getObject(params).promise();
 
-exports.uploadFiles = upload.array('file', 3);
+    res.status(200).send({
+        status: 'success',
+        data: response
+    })
+})
 
 exports.addPost = catchAsync(async(req, res, next) => {
     const indicatorId = req.params?.indicatorId ? mongoose.Types.ObjectId(req.params.indicatorId) : undefined;
+
+    // Add all post files to AWS S3 
+    if(req.files.length !== 0) {
+
+        // Set the AWS config using secure keys from HEROKU.
+        aws.config.setPromisesDependency();
+        aws.config.update({
+            accessKeyId: process.env.AWS_KEY,
+            secretAccessKey: process.env.AWS_SECRET,
+            region: 'us-west-1',
+        });
+
+        // PARAMETER DEFINITION
+        const s3 = new aws.S3();
+
+        // For every file, store the file in the S3 bucket and return it's location.
+        await Promise.all(req.files.map(async file => {
+            const params = {
+                Body: file.buffer,
+                Bucket: 'sascie',
+                Key: `posts/docs/${file.originalname}`,
+                ContentType: file.mimetype
+            }
+
+            await s3.putObject(params).promise();
+
+        }));
+    }
+
+    const fileNames = req.files.map(file => file.originalname);
 
     // Create a new post with all the data except the files.
     const post = await Post.create({
         comment: req.body.comment,
         lastUpdatedAt: Date.now(),
         photo: req.user.photo,
+        files: fileNames,
         createdBy: `${req.user.firstName} ${req.user.lastName}`,
     });
-
-    // Get a list of the filenames that were attached to this post.
-    const fileNames = req.files.map(file => 
-        `/docs/posts/${post._id}/${file.originalname}`
-    );
-
-    // Update the newly created post with the appropriate filenames.
-    const updatedPost = await Post.findByIdAndUpdate(post._id, {
-        files: fileNames
-    }, {
-        new: true,
-    });
-
-    // Store the original file paths and original file names.
-    const originalFilePaths = req.files.map(file => 
-        `sascie-react/public/docs/posts/post-${file.originalname}`
-    )
-    const originalFileNames = req.files.map(file => file.originalname);
-
-    // Move the files from their outer directory into their own directory by post id.
-    originalFilePaths.forEach((originalFilePath, index) => {
-        fse.move(originalFilePath, `sascie-react/public/docs/posts/${post._id}/${originalFileNames[index]}`, err => {
-            return
-        });
-    })
 
     if(indicatorId) {
         await Indicator.findByIdAndUpdate(indicatorId, {
@@ -86,7 +89,7 @@ exports.addPost = catchAsync(async(req, res, next) => {
     res.status(201).json({
         status: 'success',
         data: {
-            updatedPost,
+            post,
             indicatorId
         }
     })
@@ -124,7 +127,42 @@ exports.deletePost = catchAsync(async(req, res, next) => {
     const indicatorId = req.params?.indicatorId ? mongoose.Types.ObjectId(req.params.indicatorId) : undefined;
     const postId = req.params?.id ? mongoose.Types.ObjectId(req.params.id) : undefined;
 
-    await Post.findByIdAndDelete(postId);
+    // We need to find the post so we can delete any files from AWS S3 bucket.
+    const post = await Post.findById(postId);
+    post.remove();
+
+    console.log('Post: ', post);
+
+    // Add all post files to AWS S3 
+    if(post.files.length !== 0) {
+
+        // Set the AWS config using secure keys from HEROKU.
+        aws.config.setPromisesDependency();
+        aws.config.update({
+            accessKeyId: process.env.AWS_KEY,
+            secretAccessKey: process.env.AWS_SECRET,
+            region: 'us-west-1',
+        });
+
+        // PARAMETER DEFINITION
+        const s3 = new aws.S3();
+
+        const fileNames = post.files.map(file => ({ Key: `posts/docs/${file}` }));
+
+        console.log('File names: ', fileNames);
+
+        // For every file, store the file in the S3 bucket and return it's location.
+        const params = {
+            Bucket: 'sascie',
+            Delete: {
+                Objects: fileNames
+            }
+        }
+
+        console.log('Params: ', params);
+
+        await s3.deleteObjects(params).promise();
+    }
 
     if(indicatorId) {
         await Indicator.findByIdAndUpdate(indicatorId, {

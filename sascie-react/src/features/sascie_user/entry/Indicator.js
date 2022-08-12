@@ -7,18 +7,13 @@ import {
 } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useNavigate } from "react-router";
-import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 
 import Message from '../../../components/Message';
 import Loader from '../../../components/Loader';
 import { getAuthUser, updateAuthUserIndicator } from '../../auth/authSlice';
-import { 
-    updateIndicator,
-    addPost,
-} from '../../sascie/sascieSlice';
-
+import { updateIndicator, addPost } from '../../sascie/sascieSlice';
 
 const Indicator = () => {
     const navigate = useNavigate();
@@ -47,7 +42,6 @@ const Indicator = () => {
             credentials: 'include',
         });
         response = await response.json();
-        console.log('Response: ', response);
         setIndicator(response.data.doc);
         setLoading(false);
     }
@@ -97,7 +91,7 @@ const Indicator = () => {
     const handleAddPost = async () => {
         // reset error state
         setError('');
-    
+
         // Check to see if the user added a comment.
         if(!commentRef.current.value) {
             return setError('You must provide a comment in order to create a post.')
@@ -106,18 +100,44 @@ const Indicator = () => {
         setLoading(true);
         setMessage('Adding your post to the database.');
 
-        // Create the form data object.
-        const formData = new FormData();
+        const post = new FormData();
+        post.append("comment", commentRef.current.value);
+        postFiles.forEach(file => post.append("files", file));
 
-        // Append comment; and post files if they exist.
-        formData.append('comment', commentRef.current.value);
-        postFiles?.forEach(file => formData.append('file', file));
-
-        const response = await dispatch(addPost({formData, indicatorId}));
+        const response = await dispatch(addPost({ post, indicatorId }));
         if(response.status === 'error') return setError(response.error);
 
+        setPostFiles([]);
         // Clear the comment state and reload the indicator.
         await loadIndicator();
+    }
+
+    const downloadFile = async (file) => {
+        try {
+            let response = await fetch('http://localhost:5000/api/v1/posts/file', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    key: `posts/docs/${file}`,
+                })
+            });
+            response = await response.json();
+
+            // Create the file using the response data stream and content-type.
+            let blob = new Blob([new Uint8Array(response.data.Body.data)], {
+                type: response.data.ContentType
+            });
+
+            // Create a new link on the window object.
+            let link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = file.split('/').slice(-1)[0];
+            link.click();       
+        }
+        catch (err) {
+            console.log('ERROR: ', err);
+        }
     }
 
     const handleFilesChanged = (e) => {
@@ -177,7 +197,16 @@ const Indicator = () => {
                             ></textarea>
                             <div className='indicator__post__create__menu'>
                                 <label htmlFor='files'><FaPaperclip className='indicator__post__create__menu__icon'/></label>
-                                <input className="simple-file-upload" data-width="300" data-height="300" data-accepted="image/*" type="hidden" name="user[avatar_url]" id="user_avatar_url" /> :                        
+                                <input 
+                                    className='indicator__post__files__input'
+                                    onChange={handleFilesChanged}
+                                    type='file'
+                                    accept='image/*, .csv, .xlsx, .xls, .pdf, .doc, .docx'
+                                    id='files' 
+                                    name='files'
+                                    multiple
+                                ></input>
+                            
                                 <button 
                                     className='indicator__post__create__menu__btn'
                                     onClick={handleAddPost}
@@ -224,15 +253,13 @@ const Indicator = () => {
                                     <div 
                                         className='indicator__post__files--container'
                                         key={uuidv4()}
+                                        onClick={() => downloadFile(file)}
                                     >
                                         <FaPaperclip className='indicator__post__files--file__icon'/>
-                                        <Link 
+                                        <p 
                                             className='indicator__post__files--file__name'
-                                            to={file}
-                                            target="_blank"
-                                            download
                                         >{file.split('/').slice(-1)}
-                                        </Link>
+                                        </p>
                                     </div>
                                 ))
                             }
