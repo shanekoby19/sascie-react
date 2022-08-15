@@ -201,8 +201,8 @@ const Dashboard = () => {
 
     // Style the graph radial graph legend.
     const style = {
-        top: '50%',
-        right: 0,
+        top: '100%',
+        right: '0%',
         transform: 'translate(0, -50%)',
         lineHeight: '24px',
         fontSize: '1.3rem',
@@ -302,7 +302,7 @@ const Dashboard = () => {
                                         background
                                         dataKey="completionPercentage"
                                     />
-                                    <Legend iconSize={10} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
+                                    <Legend iconSize={10} layout="horizontal" verticalAlign="middle" wrapperStyle={style} />
                                 </RadialBarChart>
                             </ResponsiveContainer>
                         </div>

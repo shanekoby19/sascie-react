@@ -117,8 +117,10 @@ const Indicator = () => {
     }
 
     const downloadFile = async (file) => {
+        const url = process.env.NODE_ENV === 'production' ?  `/api/v1/posts/file` : 'http://localhost:5000/api/v1/posts/file';
+
         try {
-            let response = await fetch('http://localhost:5000/api/v1/posts/file', {
+            let response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -134,7 +136,7 @@ const Indicator = () => {
             });
 
             // Example File: dog-10319234024.png
-            const extension = file.split('.')[1];
+            const extension = file.split('.').slice(-1);
             const filename = file.split('.')[0].split('-')[0];
 
             // Create a new link on the window object.
@@ -264,7 +266,7 @@ const Indicator = () => {
                                 post.files &&
                                 post.files.map(file => {
                                     // Example File: dog-10319234024.png
-                                    const extension = file.split('.')[1];
+                                    const extension = file.split('.').slice(-1);
                                     const filename = file.split('.')[0].split('-')[0];
 
                                     return (

@@ -136,7 +136,7 @@ exports.deletePost = catchAsync(async(req, res, next) => {
 
     // Add all post files to AWS S3 
     if(post.files.length !== 0) {
-
+        
         // Set the AWS config using secure keys from HEROKU.
         aws.config.setPromisesDependency();
         aws.config.update({

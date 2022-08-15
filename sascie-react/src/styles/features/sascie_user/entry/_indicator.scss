@@ -224,6 +224,10 @@
             &--yellow {
                 background-color: #ffee00;
             }
+
+            &--red {
+                background-color: $primary-red;
+            }
         }
     }
 }
