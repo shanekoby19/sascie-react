@@ -78,7 +78,7 @@ export const updateMe = createAsyncThunk('users/updateMe', async(formData) => {
     } catch(err) {
         return err;
     }
-})
+});
 
 const usersSlice = createSlice({
     name: 'users',

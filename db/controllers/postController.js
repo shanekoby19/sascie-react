@@ -1,13 +1,11 @@
 const mongoose = require('mongoose');
 
-
 const Post = require('../models/postModel');
 const Indicator = require('../models/indicatorModel');
 const handlerFactory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const aws = require('aws-sdk');
-const { create } = require('../models/postModel');
 
 exports.getAllPosts = handlerFactory.getAll(Post);
 exports.getPost = handlerFactory.getOne(Post);
@@ -59,10 +57,15 @@ exports.addPost = catchAsync(async(req, res, next) => {
 
         // For every file, store the file in the S3 bucket and return it's location.
         await Promise.all(req.files.map(async file => {
+            // Handle files that might contain additional periods. (Ex: Mac Screenshot - Screen Shot 2022-08-11 at 2.51.51 PM.png)
+            const fileName = file.originalname.split('.').slice(0, file.originalname.split('.').length - 1).join('');
+            const fileExtension = file.originalname.split('.').slice(-1);
+            const key = `posts/docs/${fileName}-${createdAt}.${fileExtension}`;
+
             const params = {
                 Body: file.buffer,
                 Bucket: 'sascie',
-                Key: `posts/docs/${file.originalname.split('.')[0]}-${createdAt}.${file.originalname.split('.')[1]}`,
+                Key: key,
                 ContentType: file.mimetype
             }
 
@@ -71,7 +74,12 @@ exports.addPost = catchAsync(async(req, res, next) => {
         }));
     }
 
-    const fileNames = req.files.map(file => `${file.originalname.split('.')[0]}-${createdAt}.${file.originalname.split('.')[1]}`);
+    const fileNames = req.files.map(file => {
+        // Handle files that might contain additional periods. (Ex: Mac Screenshot - Screen Shot 2022-08-11 at 2.51.51 PM.png)
+        const fileName = file.originalname.split('.').slice(0, file.originalname.split('.').length - 1).join('');
+        const fileExtension = file.originalname.split('.').slice(-1);
+        return `${fileName}-${createdAt}.${fileExtension}`;
+    });
 
     // Create a new post with all the data except the files.
     const post = await Post.create({

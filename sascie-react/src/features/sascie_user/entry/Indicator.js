@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import Message from '../../../components/Message';
 import Loader from '../../../components/Loader';
-import { getAuthUser, updateAuthUserIndicator } from '../../auth/authSlice';
+import { getAuthUser, updateAuthUserIndicator, updateAuthUserPost } from '../../auth/authSlice';
 import { updateIndicator, addPost } from '../../sascie/sascieSlice';
 
 const Indicator = () => {
@@ -108,8 +108,12 @@ const Indicator = () => {
             postFiles.forEach(file => post.append("files", file));
         }
 
+        // Dispatch the update
         const response = await dispatch(addPost({ post, indicatorId }));
         if(response.status === 'error') return setError(response.error);
+
+        // Update the user indicator with the new post.
+        await dispatch(updateAuthUserPost({ post: response.payload.data.post, indicatorId }))
 
         setPostFiles([]);
         // Clear the comment state and reload the indicator.

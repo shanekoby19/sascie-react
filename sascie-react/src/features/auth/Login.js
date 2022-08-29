@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
 
-import { getAuthStatus, login } from './authSlice';
+import { getAuthStatus, getUserProfilePicture, login } from './authSlice';
 import { getUsersStatus, fetchUsers } from '../users/usersSlice';
 import { setSascieData } from '../sascie/sascieSlice';
 import Message from '../../components/Message';
@@ -70,6 +70,10 @@ const Login = () => {
             // If the user successfully logged in, set there sascie data and fetch all users.
             dispatch(setSascieData(res.data));
             loadUsers();
+
+            // If the user has the default profile image do not append the user id to the key file path. The user id is used to create unique files on AWS.
+            const key = res.data.user.photo === 'default-user.png' ? `img/users/${res.data.user.photo}` : `img/users/${res.data.user._id}-${res.data.user.photo}`;
+            dispatch(getUserProfilePicture(key));
         } catch(err) {
             return;
         }

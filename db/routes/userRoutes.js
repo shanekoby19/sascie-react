@@ -12,11 +12,19 @@ userRouter
 
 userRouter
     .route('/me')
-    .patch(authController.refreshToken, authController.protect, authController.restrictTo('admin', 'inputer'), userController.uploadUserPhoto, userController.resizeUserPhoto, userController.updateMe)
+    .patch(authController.refreshToken, authController.protect, authController.restrictTo('admin', 'inputer'), userController.uploadUserPhoto, userController.updateMe)
 
 userRouter
     .route('/:id')
     .patch(authController.refreshToken, authController.protect, authController.restrictTo('admin'), userController.updateUser)
     .delete(authController.refreshToken, authController.protect, authController.restrictTo('admin'), userController.hideUser)
+
+userRouter
+    .route('/file')
+    .post(authController.refreshToken, authController.protect, userController.getUserProfilePicture)
+
+userRouter
+    .route('/updateProfilePicture')
+    .post(authController.refreshToken, authController.protect, authController.restrictTo('admin', 'inputer'), userController.uploadUserPhoto, userController.updateAuthUserPhoto)
 
 module.exports = userRouter;

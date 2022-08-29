@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 
 import { updateMe } from "./usersSlice";
-import { getAuthUser } from '../auth/authSlice';
+import { getAuthUser, getUserProfilePicture, updateAuthUserPhoto } from '../auth/authSlice';
 import Message from '../../components/Message';
 
 import { FaEdit } from 'react-icons/fa';
@@ -10,7 +10,7 @@ import { FaEdit } from 'react-icons/fa';
 const EditMe = () => {
   // Hooks
   const authUser = useSelector(getAuthUser);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); 
 
   // Componenet State
   const [email, setEmail] = useState(authUser?.email);
@@ -19,7 +19,6 @@ const EditMe = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [userPhotoFile, setUserPhotoFile] = useState(undefined);
-  const [imageSource, setImageSource] = useState(`./img/users/${authUser.photo}`);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -30,6 +29,11 @@ const EditMe = () => {
   const onPasswordUpdate = (e) => setPassword(e.target.value);
   const onConfirmPasswordUpdate = (e) => setConfirmPassword(e.target.value);
   
+  // Create the user profile image using the data stream and content-type.
+  let blob = new Blob([new Uint8Array(authUser.imageData)], {
+    type: authUser.imageContentType
+  });
+
   // Component functions
   const handleSave = async (e) => {
     // Reset State
@@ -58,21 +62,36 @@ const EditMe = () => {
     const formData = new FormData();
 
     // If the user uploaded a new profile image, save it to the formData.
-    if(userPhotoFile) formData.append("photo", userPhotoFile);
+    if(userPhotoFile) {
+      // Store the photo and aws file path (Key) on the formData object.
+      formData.append("photo", userPhotoFile);
+      formData.append("oldKey", `img/users/${authUser.photo}`)
+      formData.append("newKey", `img/users/${authUser._id}-${userPhotoFile.name}`)
+    }
 
-    // If the user changed  any of their current profile values, save them to the formData.
+    // If the user changed any of their current profile values, save them to the formData.
     Object.entries(body).map(([key, value]) => {
       formData.append(key, value);
     });
 
+    // Update the current user in the database.
     try {
       let response = await dispatch(updateMe(formData)).unwrap();
       if(response.status === 'error') return setError(response.error);
+
+      // Update the auth user photo data if a new photo was submitted successfully
+      if(userPhotoFile) {
+        const newKey = `img/users/${authUser._id}-${response.data.updatedUser.photo}`;
+
+        try {
+          await dispatch(getUserProfilePicture(newKey)).unwrap();
+        } catch(err) {
+          console.log("ERROR: ", err);
+        }
+      }
+
       setError('');
       setSuccess('Your profile has been updated successfully.');
-      setTimeout(() => {
-        setSuccess('')
-      }, 3000);
     } catch(err) {
       return;
     }
@@ -86,7 +105,7 @@ const EditMe = () => {
           >
             <div className='edit__form__user__image'>
               <div className='edit__form__user__image--image'>
-                <img src={imageSource} alt='current user'></img>
+                <img id='user-img' src={window.URL.createObjectURL(blob)} alt='current user'></img>
                 {
                   authUser.role !== 'viewer' &&
                   <div className='edit__form__user__image--backdrop'>

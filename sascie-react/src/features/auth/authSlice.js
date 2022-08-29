@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const baseUrl = process.env.NODE_ENV === 'production' ? `/api/v1/auth` : 'http://localhost:5000/api/v1/auth';
 
@@ -48,6 +48,42 @@ export const sendResetToken = createAsyncThunk('auth/sendResetToken', async(emai
         return response;
     } catch(err) {
         return err;
+    }
+});
+
+export const getUserProfilePicture = createAsyncThunk('auth/getUserProfilePicture', async(key) => {
+    const url = process.env.NODE_ENV === 'production' ? `/api/v1/users/file` : 'http://localhost:5000/api/v1/users/file';
+
+    try {
+        let response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                key
+            })
+        });
+        response = await response.json();
+        // Get the photo name to store on the authUser object. This will allow us to delete the photo from the AWS bucket.
+        response.data.photo = key.split('/').slice(-1);
+        return response;
+    }
+    catch (err) {
+        console.log('ERROR: ', err);
+    }
+});
+
+export const updateAuthUserPhoto = createAsyncThunk('auth/updateAuthUserPhoto', async(formData) => {
+    try {
+        let response = await fetch('http://localhost:5000/api/v1/users/updateProfilePicture', {
+            method: "POST",
+            body: formData,
+            credentials: 'include',
+        });
+        response = await response.json();
+        return response;
+    } catch(err) {
+        console.log("ERROR: ", err)
     }
 });
 
@@ -114,7 +150,43 @@ const authSlice = createSlice({
                                             }
                                             return {
                                                 ...indicator,
-                                                status
+                                                status,
+                                            }
+                                        })
+                                    }))
+                                }))
+                            }))
+                        }
+                    ]
+                }
+            }
+        },
+        updateAuthUserPost: (state, action) => {
+            const { post, indicatorId } = action.payload;
+            const foundProgram = state.authUser.programs.find(program => program.serviceAreas.find(serviceArea => serviceArea.items.find(item => item.executions.find(execution => execution.indicators.find(indicator => indicator._id === indicatorId)))));
+            const filteredPrograms = state.authUser.programs.filter(program => program._id !== foundProgram._id);
+            
+            return {
+                ...state,
+                authUser: {
+                    ...state.authUser,
+                    programs: [
+                        ...filteredPrograms,
+                        {
+                            ...foundProgram,
+                            serviceAreas: foundProgram.serviceAreas.map(serviceArea => ({
+                                ...serviceArea,
+                                items: serviceArea.items.map(item => ({
+                                    ...item,
+                                    executions: item.executions.map(execution => ({
+                                        ...execution,
+                                        indicators: execution.indicators.map(indicator => {
+                                            if(indicator._id !== indicatorId) {
+                                                return { ...indicator }
+                                            }
+                                            return {
+                                                ...indicator,
+                                                posts: indicator.posts.concat(post)
                                             }
                                         })
                                     }))
@@ -155,6 +227,31 @@ const authSlice = createSlice({
                 state.error = action.payload.error;
             }
         })
+        .addCase(getUserProfilePicture.pending, (state, action) => {
+            state.status = 'pending'
+        })
+        .addCase(getUserProfilePicture.fulfilled, (state, action) => {
+            if(action.payload.status === 'success') {
+                state.authUser = {
+                    ...state.authUser,
+                    photo: action.payload.data.photo,
+                    imageData: action.payload.data.Body.data,
+                    imageContentType: action.payload.data.ContentType,
+                }
+            }
+        })
+        .addCase(updateAuthUserPhoto.pending, (state, action) => {
+            state.status = 'pending'
+        })
+        .addCase(updateAuthUserPhoto.fulfilled, (state, action) => {
+            if(action.payload.status === 'success') {
+                state.authUser = {
+                    ...state.authUser,
+                    imageData: action.payload.data.Body.data,
+                    imageContentType: action.payload.data.ContentType,
+                }
+            }
+        })
     }
 });
 
@@ -164,7 +261,8 @@ export const getAuthStatus = state => state.auth.status;
 export const { 
                 deleteAuthUserServiceAreas, 
                 addAuthUserServiceArea,
-                updateAuthUserIndicator
+                updateAuthUserIndicator,
+                updateAuthUserPost,
              } = authSlice.actions;
 
 export default authSlice.reducer;

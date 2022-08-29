@@ -1,52 +1,20 @@
 const multer = require('multer');
-const sharp = require('sharp');
 const mongoose = require('mongoose');
 
 const handlerFactory = require('./handlerFactory');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const removeSensitiveKeys = require('../utils/removeSensitiveKeys');
-const AppError = require('../utils/appError');
-const fse = require('fs-extra');
-
-const multerStorage = multer.memoryStorage();
-
-// Check to see if the uploaded file is an image.
-const multerFilter = (req, file, cb) => {
-    if(file.mimetype.startsWith('image')) {
-        cb(null, true)
-    } else {
-        cb(new AppError('Not an image! Please upload a valid image file.', 400), false)
-    }
-}
-
-// Define the middleware function with some the storage and fileFilter options.
-const upload = multer({
-    storage: multerStorage,
-    fileFilter: multerFilter,
-});
+const aws = require('aws-sdk');
+const { createAsyncThunk } = require('@reduxjs/toolkit');
 
 exports.hideUser = handlerFactory.hideOne(User);
 
+// Define the middleware function with some the storage and fileFilter options.
+const upload = multer();
+
 // Multer photo upload middleware.
 exports.uploadUserPhoto = upload.single('photo');
-
-// Custom middleware to resize the user photo and store it into our filesystem.
-exports.resizeUserPhoto = (req, res, next) => {
-    if(!req.file) return next();
-
-    // Store the filename on the req.file for the next middleware function.
-    req.file.filename = `user-${req.user._id}.jpeg`;
-
-    // resize the image, convert it to a jpeg, give it 90% quality and save it to our image directory.
-    sharp(req.file.buffer)
-        .resize(500, 500)
-        .toFormat('jpeg')
-        .jpeg({ quality: 90 })
-        .toFile(`sascie-react/public/img/users/${req.file.filename}`);
-
-    next();
-};
 
 exports.getUsers = catchAsync(async(req, res, next) => {
     let users = await User.find();
@@ -90,7 +58,43 @@ exports.updateMe = catchAsync(async(req, res, next) => {
     if(!req.file) {
         photo = req.user.photo || 'user-default.png';
     } else {
-        photo = req.file.filename;
+        photo = req.file.originalname;
+
+        // Set the aws configurations.
+        aws.config.setPromisesDependency();
+        aws.config.update({
+            accessKeyId: process.env.AWS_KEY,
+            secretAccessKey: process.env.AWS_SECRET,
+            region: 'us-west-1',
+        });
+
+        // PARAMETER DEFINITION
+        const s3 = new aws.S3();
+
+        // Ensure we do not delete the default user image from the AWS bucket.
+        if(req.body.oldKey !== 'img/users/default-user.png') {
+            // Delete the old file
+            let params = {
+                Bucket: 'sascie',
+                Delete: {
+                    Objects: [{
+                        Key: req.body.oldKey
+                    }]
+                }
+            }
+            await s3.deleteObjects(params).promise();
+        }
+
+        // Add the new file
+        params = {
+            Body: req.file.buffer,
+            Bucket: 'sascie',
+            Key: req.body.newKey,
+            ContentType: req.file.mimetype
+        }
+
+        await s3.putObject(params).promise();
+
     }
 
     const updatedUser = await User.findByIdAndUpdate(_id, {
@@ -139,6 +143,31 @@ exports.updateUser = catchAsync(async(req, res, next) => {
     });
 });
 
+exports.getUserProfilePicture = catchAsync(async(req, res, next) => {
+    // Set the AWS config using secure keys from HEROKU.
+    aws.config.setPromisesDependency();
+    aws.config.update({
+        accessKeyId: process.env.AWS_KEY,
+        secretAccessKey: process.env.AWS_SECRET,
+        region: 'us-west-1',
+    });
+
+    // PARAMETER DEFINITION
+    const s3 = new aws.S3();
+
+    const params = {
+        Bucket: 'sascie',
+        Key: req.body.key
+    }
+
+    const response = await s3.getObject(params).promise();
+
+    res.status(200).send({
+        status: 'success',
+        data: response
+    })
+})
+
 exports.addUser = catchAsync(async(req, res, next) => {
     let doc = await User.create({
         email: req.body.email,
@@ -150,16 +179,7 @@ exports.addUser = catchAsync(async(req, res, next) => {
         password: req.body.password,
         confirmPassword: req.body.confirmPassword,
         programs: req.body.programs,
-    });
-
-    // Create a copy of the default photo and save it to the user.
-    await fse.copy(`sascie-react/public/img/users/user-default.jpeg`, `sascie-react/public/img/users/user-${doc._id}.jpeg`)
-
-    // Update and return the new document
-    doc = await User.findByIdAndUpdate(doc._id, {
-        photo: `user-${doc._id}.jpeg`
-    }, {
-        new: true,
+        photo: 'default-user.png',
     });
 
     // Remove sensitive information
@@ -172,3 +192,41 @@ exports.addUser = catchAsync(async(req, res, next) => {
         }
     });
 });
+
+exports.updateAuthUserPhoto = createAsyncThunk(async(req, res, next) => {
+    // // Set the AWS config using secure keys from HEROKU.
+    // aws.config.setPromisesDependency();
+    // aws.config.update({
+    //     accessKeyId: process.env.AWS_KEY,
+    //     secretAccessKey: process.env.AWS_SECRET,
+    //     region: 'us-west-1',
+    // });
+
+    // // PARAMETER DEFINITION
+    // const s3 = new aws.S3();
+
+    // // Delete the old file
+    // let params = {
+    //     Bucket: 'sascie',
+    //     Delete: {
+    //         Objects: [{
+    //             Key: oldKey
+    //         }]
+    //     }
+    // }
+    // await s3.deleteObjects(params).promise();
+
+    // // Add the new file
+    // params = {
+    //     Body: Buffer.from(newFile),
+    //     Bucket: 'sascie',
+    //     Key: newKey,
+    //     ContentType: newFile.mimetype
+    // }
+
+    // await s3.putObject(params).promise();
+
+    res.status(200).json({
+        status: 'success'
+    })
+})
