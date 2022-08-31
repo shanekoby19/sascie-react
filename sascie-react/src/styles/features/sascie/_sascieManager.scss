@@ -50,6 +50,10 @@
             &--delete {
                 background-color: $primary-red;
                 color: white;
+
+                &:hover {
+                    cursor: pointer;
+                }
             }
         }
     }

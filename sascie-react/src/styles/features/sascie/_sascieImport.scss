@@ -6,6 +6,7 @@
     &__file__selector {
         &:hover {
             cursor: pointer;
+            text-decoration: underline;
         }
 
         &--text {
