@@ -54,6 +54,8 @@ export const sendResetToken = createAsyncThunk('auth/sendResetToken', async(emai
 export const getUserProfilePicture = createAsyncThunk('auth/getUserProfilePicture', async(key) => {
     const url = process.env.NODE_ENV === 'production' ? `/api/v1/users/file` : 'http://localhost:5000/api/v1/users/file';
 
+    console.log('key: ', key);
+
     try {
         let response = await fetch(url, {
             method: 'POST',

@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import Message from '../../../components/Message';
 import Loader from '../../../components/Loader';
-import { getAuthUser, updateAuthUserIndicator, updateAuthUserPost } from '../../auth/authSlice';
+import { getAuthUser, getUserProfilePicture, updateAuthUserIndicator, updateAuthUserPost } from '../../auth/authSlice';
 import { updateIndicator, addPost } from '../../sascie/sascieSlice';
 
 const Indicator = () => {
@@ -34,6 +34,12 @@ const Indicator = () => {
     const { indicatorId } = useParams();
     const authUser = useSelector(getAuthUser);
 
+    // Creates the user image from the user data.
+    // Create the user profile image using the data stream and content-type.
+    let userImage = new Blob([new Uint8Array(authUser.imageData)], {
+        type: authUser.imageContentType
+    });
+
     // Loads the indicator from the database for the given indicatorId in the url.
     const loadIndicator = async() => {
         const url = process.env.NODE_ENV === 'production' ?  `/api/v1/indicators/${indicatorId}` :`http://localhost:5000/api/v1/indicators/${indicatorId}`;
@@ -43,6 +49,20 @@ const Indicator = () => {
         });
         response = await response.json();
         setIndicator(response.data.doc);
+
+        // CHANGE USER ID TO REFLECT post.userId
+        response.data.doc.posts = await Promise.all(response.data.doc.posts.map(async post => {
+            console.log('Post: ', post.photo);
+            const key = post.photo === 'default-user.png' ? `img/users/${post.photo}` : `img/users/${post.userId}-${post.photo}`;
+
+            const response = await dispatch(getUserProfilePicture(key));
+            return {
+                ...post,
+                imageContentType: response.payload.data.ContentType,
+                imageData: response.payload.data.Body.data
+            }
+        }));
+
         setLoading(false);
     }
     
@@ -69,6 +89,11 @@ const Indicator = () => {
         // Reset any error state.
         setError('');
 
+        // Ensure the user is at least an inputer before changing the indicator status.
+        if(authUser.role === 'viewer') {
+            return setError('You are not authorized to perform this action. Please contact your system administrator for more information.');
+        }
+
         // Check to see if a post has been created if user is submitting for review or completion.
         if((status === 'Under Review' || status === 'Completed') && indicator.posts.length === 0) {
             return setError('You must create a post before you can submit for review.')
@@ -91,6 +116,11 @@ const Indicator = () => {
     const handleAddPost = async () => {
         // reset error state
         setError('');
+
+        // Ensure the user is at least an inputer before creating a new post.
+        if(authUser.role === 'viewer') {
+            return setError('You are not authorized to perform this action. Please contact your system administrator for more information.');
+        }
 
         // Check to see if the user added a comment.
         if(!commentRef.current.value) {
@@ -195,7 +225,7 @@ const Indicator = () => {
                         <div className='indicator__post__user-bio'>
                             <img 
                                 className='indicator__post__user-bio__picture'
-                                src={`/img/users/${authUser.photo}`} 
+                                src={window.URL.createObjectURL(userImage)}
                                 alt='user profile image'>
                             </img>
                             <div className='indicator__post__user-bio__info'>
@@ -220,7 +250,7 @@ const Indicator = () => {
                                     name='files'
                                     multiple
                                 ></input>
-                            
+
                                 <button 
                                     className='indicator__post__create__menu__btn'
                                     onClick={handleAddPost}
@@ -251,9 +281,12 @@ const Indicator = () => {
                     indicator?.posts?.map(post => (
                         <div key={post._id} className='indicator__post'> 
                             <div className='indicator__post__user-bio'>
+                                { console.log(post) }
                                 <img 
                                     className='indicator__post__user-bio__picture'
-                                    src={`/img/users/${post.photo}`} 
+                                    src={window.URL.createObjectURL(new Blob([new Uint8Array(post.imageData)], {
+                                        type: post.imageContentType
+                                    }))} 
                                     alt='user profile image'>
                                 </img>
                                 <div className='indicator__post__user-bio__info'>

@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 
 const handlerFactory = require('./handlerFactory');
 const User = require('../models/userModel');
+const Post = require('../models/postModel');
 const catchAsync = require('../utils/catchAsync');
 const removeSensitiveKeys = require('../utils/removeSensitiveKeys');
 const aws = require('aws-sdk');
-const { createAsyncThunk } = require('@reduxjs/toolkit');
 
 exports.hideUser = handlerFactory.hideOne(User);
 
@@ -59,6 +59,7 @@ exports.updateMe = catchAsync(async(req, res, next) => {
         photo = req.user.photo || 'user-default.png';
     } else {
         photo = req.file.originalname;
+        console.log(req.file.originalname);
 
         // Set the aws configurations.
         aws.config.setPromisesDependency();
@@ -95,6 +96,15 @@ exports.updateMe = catchAsync(async(req, res, next) => {
 
         await s3.putObject(params).promise();
 
+        // If the old photo was successfully delete and the new photo was successfully placed into our s3 bucket, then change every post for the given user id to include the new user photo.
+        const docs = await Post.updateMany({ 
+            userId: req.user._id.toString() 
+        }, {
+            photo
+        });
+
+        console.log("Posts: ", docs);
+
     }
 
     const updatedUser = await User.findByIdAndUpdate(_id, {
@@ -108,7 +118,7 @@ exports.updateMe = catchAsync(async(req, res, next) => {
     }, {
         new: true,
     });
-    
+
     res.status(200).json({
         status: 'success',
         data: {
@@ -192,41 +202,3 @@ exports.addUser = catchAsync(async(req, res, next) => {
         }
     });
 });
-
-exports.updateAuthUserPhoto = createAsyncThunk(async(req, res, next) => {
-    // // Set the AWS config using secure keys from HEROKU.
-    // aws.config.setPromisesDependency();
-    // aws.config.update({
-    //     accessKeyId: process.env.AWS_KEY,
-    //     secretAccessKey: process.env.AWS_SECRET,
-    //     region: 'us-west-1',
-    // });
-
-    // // PARAMETER DEFINITION
-    // const s3 = new aws.S3();
-
-    // // Delete the old file
-    // let params = {
-    //     Bucket: 'sascie',
-    //     Delete: {
-    //         Objects: [{
-    //             Key: oldKey
-    //         }]
-    //     }
-    // }
-    // await s3.deleteObjects(params).promise();
-
-    // // Add the new file
-    // params = {
-    //     Body: Buffer.from(newFile),
-    //     Bucket: 'sascie',
-    //     Key: newKey,
-    //     ContentType: newFile.mimetype
-    // }
-
-    // await s3.putObject(params).promise();
-
-    res.status(200).json({
-        status: 'success'
-    })
-})

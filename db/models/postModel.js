@@ -23,6 +23,10 @@ const postSchema = mongoose.Schema({
     createdBy: {
         type: String,
         required: [true, 'A post must have a reference to who last updated it.']
+    },
+    userId: {
+        type: String,
+        required: [true, 'A post must have a reference to the user who created it.']
     }
 });
 

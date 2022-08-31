@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 
 import { updateMe } from "./usersSlice";
-import { getAuthUser, getUserProfilePicture, updateAuthUserPhoto } from '../auth/authSlice';
+import { getAuthUser, getUserProfilePicture } from '../auth/authSlice';
 import Message from '../../components/Message';
+import { ColorRing } from 'react-loader-spinner';
 
 import { FaEdit } from 'react-icons/fa';
 
@@ -21,6 +22,7 @@ const EditMe = () => {
   const [userPhotoFile, setUserPhotoFile] = useState(undefined);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // State update functions.
   const onFirstNameUpdate = (e) => setFirstName(e.target.value);
@@ -37,6 +39,7 @@ const EditMe = () => {
   // Component functions
   const handleSave = async (e) => {
     // Reset State
+    setLoading(true);
     setError('');
     setSuccess('');
 
@@ -55,6 +58,7 @@ const EditMe = () => {
     });
 
     if(Object.entries(body).length < 1 && !userPhotoFile) {
+      setLoading(false);
       return setError('No updates found, please update a field before saving.')
     }
 
@@ -77,7 +81,10 @@ const EditMe = () => {
     // Update the current user in the database.
     try {
       let response = await dispatch(updateMe(formData)).unwrap();
-      if(response.status === 'error') return setError(response.error);
+      if(response.status === 'error') {
+        setLoading(false);
+        return setError(response.error);
+      }
 
       // Update the auth user photo data if a new photo was submitted successfully
       if(userPhotoFile) {
@@ -86,15 +93,19 @@ const EditMe = () => {
         try {
           await dispatch(getUserProfilePicture(newKey)).unwrap();
         } catch(err) {
-          console.log("ERROR: ", err);
+          setLoading(false);
+          setError(err);
         }
       }
 
       setError('');
       setSuccess('Your profile has been updated successfully.');
     } catch(err) {
+      setLoading(false);
       return;
     }
+
+    setLoading(false);
   }
 
   return (
@@ -184,10 +195,28 @@ const EditMe = () => {
             { error ? <Message message={error} className='error' /> : null }
             { success ? <Message message={success} className='success' /> : null }
             <div>
+                { 
+                  loading ?
+                  // Import from react-loader-spinner 
+                  <div><ColorRing 
+                    visible={loading}
+                    height="5rem"
+                    width="5rem"
+                    ariaLabel="blocks-loading"
+                    wrapperStyle={{
+                      "width": "100%",
+                      "marginTop": '1rem'
+                    }}
+                    wrapperClass="blocks-wrapper"
+                    colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81']}
+                  />
+                  <p style={{textAlign: "center", fontSize: "1.2rem"}}>saving...</p></div> :
                   <button
+                      disabled={loading}
                       onClick={handleSave}
                       className='edit__form__input__btn'
                   >Save</button>
+                }
               </div>
           </div>
       </section>
