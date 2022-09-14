@@ -25,7 +25,6 @@ const Indicator = () => {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('Loading your indicator from the database.');
     
-    
     // Load the indicator from the database.
     useEffect(() => {
         loadIndicator();
@@ -52,7 +51,6 @@ const Indicator = () => {
 
         // CHANGE USER ID TO REFLECT post.userId
         response.data.doc.posts = await Promise.all(response.data.doc.posts.map(async post => {
-            console.log('Post: ', post.photo);
             const key = post.photo === 'default-user.png' ? `img/users/${post.photo}` : `img/users/${post.userId}-${post.photo}`;
 
             const response = await dispatch(getUserProfilePicture(key));

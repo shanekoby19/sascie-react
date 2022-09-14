@@ -41,8 +41,6 @@ exports.addPost = catchAsync(async(req, res, next) => {
     const indicatorId = req.params?.indicatorId ? mongoose.Types.ObjectId(req.params.indicatorId) : undefined;
     const createdAt = Date.now();
 
-    console.log('Requested User Id: ', req.user._id.toString());
-
     // Add all post files to AWS S3 
     if(req.files.length !== 0) {
 
