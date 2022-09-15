@@ -17,6 +17,11 @@
         position: absolute;
         bottom: 1.5rem;
 
+        @include respond(phone) {
+            font-size: 1rem;
+            width: 6rem;
+        }
+
         &:hover {
             transform: scale(1.1) translateY(-2px);
             cursor: pointer;
@@ -69,6 +74,17 @@
         flex-direction: column;
         width: calc(33% - 2rem);
         margin-right: 2rem;
+
+        // Base style override.
+        & > select {
+            @include respond(phone) {
+                font-size: 1.3rem;
+            }
+        }
+
+        @include respond(phone) {
+            width: 100%;
+        }
     }
 
     &__table {
@@ -92,6 +108,10 @@
 
             text-align: center;
             vertical-align: center;
+
+            @include respond(phone) {
+                font-size: 1.2rem;
+            }
         }
 
         & > tbody > tr > td {
@@ -102,11 +122,23 @@
 
             text-align: center;
             vertical-align: center;
+
+            @include respond(phone) {
+                font-size: 1rem;
+            }
         }
 
         // table select input
         & > tbody > tr > td > input {
             transform: scale(2);
+
+            @include respond(tab-port) {
+                transform: scale(1.2);
+            }
+
+            @include respond(phone) {
+                transform: scale(1);
+            }
         }
 
         & > tbody tr:hover {

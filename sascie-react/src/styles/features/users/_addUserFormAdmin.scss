@@ -11,6 +11,11 @@
         width: 80%;
         position: relative;
 
+        @include respond(phone) {
+            width: 90%;
+            padding: 2rem 0rem;
+        }
+
         // Grid layout
         &__grid {
             display: grid;
@@ -20,7 +25,20 @@
                 "email role"
                 "firstName lastName"
                 "programs service-areas"
-                "password confirmPassword"
+                "password confirmPassword";
+
+            @include respond(phone) {
+                grid-template-columns: none;
+                grid-template-areas: 
+                "email"
+                "role"
+                "firstName"
+                "lastName"
+                "programs"
+                "service-areas"
+                "password"
+                "confirmPassword";
+            }
         }
 
         // Title
@@ -89,7 +107,12 @@
                 font-size: 2rem;
                 background-color: $primary-red;
                 color: white;
-                width: 100%;
+                width: 90%;
+
+                &__container {
+                    display: flex;
+                    justify-content: center;
+                }
 
                 &:hover {
                     background-color:  white;

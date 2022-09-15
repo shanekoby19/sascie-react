@@ -210,7 +210,7 @@ const AddUserFormAdmin = () => {
                 </div>
                 { success ? <Message message={success} className='success'/> : null }
                 { error ? <Message message={error} className='error' /> : null }
-                <div>
+                <div className='add__form__input__btn__container'>
                     <button
                         type="submit" 
                         className='add__form__input__btn'

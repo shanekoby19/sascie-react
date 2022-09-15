@@ -237,7 +237,7 @@ const EditUserFormAdmin = () => {
                     </div>
                 </div>
                 { error ? <Message message={error} className='error' /> : null }
-                <div>
+                <div className='edit__admin__form__input__btn__container'>
                     <button
                         type="submit" 
                         className='edit__admin__form__input__btn'

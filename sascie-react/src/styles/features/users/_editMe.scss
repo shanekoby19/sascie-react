@@ -9,8 +9,12 @@
     &__form {
         padding: 5rem 10rem;
         border-radius: 1rem;
-        width: 80%;
+        width: 100%;
         position: relative;
+
+        @include respond(phone) {
+            padding: 0rem 1rem;
+        }
 
         &__grid {
             display: grid;
@@ -20,6 +24,17 @@
                 "firstName lastName"
                 "password confirmPassword";
             justify-items: center;
+
+            @include respond(phone) {
+                grid-template-columns: none;
+                grid-template-areas: 
+                    "email"
+                    "firstName"
+                    "lastName"
+                    "password"
+                    "confirmPassword"
+                    "field";
+            }
         }
 
         &__filename {
@@ -41,7 +56,10 @@
                 position: relative;
                 & > img {
                     width: 10rem; 
+                    height: 10rem;
                     border-radius: 100%;
+
+
                 }
             }
 

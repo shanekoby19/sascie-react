@@ -50,9 +50,17 @@
         width: 50%;
         align-items: center;
         justify-content: center;
+
+        @include respond(phone) {
+            width: 100%;
+        }
     }
 
     &__radar {
+        @include respond(phone) {
+            display: none;
+        }
+
         &__filter {
             margin-bottom: 2rem;
         }

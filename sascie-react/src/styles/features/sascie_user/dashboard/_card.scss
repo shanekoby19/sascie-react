@@ -9,6 +9,10 @@
 
     background-image: linear-gradient(to right bottom, $primary_red, lighten($primary_red, 30));
 
+    @include respond(phone) {
+        width: 80%;
+    }
+
     &:not(:last-child) {
         margin-bottom: 2rem;
     }
