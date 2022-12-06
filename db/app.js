@@ -82,4 +82,5 @@ app.use('*', (req, res, next) => {
 // Error handling middleware
 app.use(globalErrorHandler);
 
+// Export the app.
 module.exports = app;
